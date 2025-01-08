@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 
 const App = () => {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [transcripts, setTranscripts] = useState([]);
+  const [currentTranscript, setCurrentTranscript] = useState("");
   const [error, setError] = useState("");
 
   const recognitionRef = useRef(null);
@@ -21,7 +22,7 @@ const App = () => {
 
     recognitionRef.current.onresult = (event) => {
       const speechResult = event.results[0][0].transcript;
-      setTranscript((prev) => `${prev} ${speechResult}`);
+      setCurrentTranscript((prev) => `${prev} ${speechResult}`);
     };
 
     recognitionRef.current.onerror = (event) => {
@@ -29,16 +30,20 @@ const App = () => {
     };
 
     recognitionRef.current.onend = () => {
+      if (currentTranscript) {
+        setTranscripts((prevTranscripts) => [...prevTranscripts, currentTranscript]);
+        sendTranscriptToBackend(currentTranscript);
+        setCurrentTranscript("");
+      }
       if (isListening) {
         recognitionRef.current.start();
       }
-    };
-  }, [isListening]);
+    }
+  }, [isListening, currentTranscript]);
 
   const startListening = () => {
     if (!recognitionRef.current) return;
     setIsListening(true);
-    setTranscript(""); // Clear transcript when starting a new session
     setError("");
     recognitionRef.current.start();
   };
@@ -49,34 +54,39 @@ const App = () => {
     recognitionRef.current.stop();
   };
 
+  const sendTranscriptToBackend = async (transcript) => {
+    try {
+      const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Backend response:", data);
+    } catch (error) {
+      console.error("Error sending transcript to backend:", error);
+      setError("Failed to send transcript to backend.");
+    }
+  };
+
   return (
-    <div
-      style={{
-        fontFamily: "Arial, sans-serif",
-        padding: "20px",
-        marginLeft: "25%",
-        marginRight: "auto",
-        width: "1000px",
-        border: "1px solid black",
-      }}
-    >
+    <div style={{ fontFamily: "Arial, sans-serif", padding: "20px", margin: "0 auto", width: "600px", border: "1px solid black" }}>
       <h1 style={{ textAlign: "center" }}>Speech-to-Text Converter</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <textarea
-        rows="10"
-        cols="50"
-        value={transcript}
-        readOnly
-        style={{
-          marginBottom: "20px",
-          padding: "10px",
-          fontSize: "16px",
-          marginLeft: "250px",
-          marginRight: "auto",
-        }}
-      />
-      <br />
-      <div style={{ marginLeft: "330px" }}>
+      <div>
+        <h2>Transcripts</h2>
+        <ul>
+          {transcripts.map((text, index) => (
+            <li key={index}>{text}</li>
+          ))}
+        </ul>
+      </div>
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
         <button
           onClick={startListening}
           disabled={isListening}

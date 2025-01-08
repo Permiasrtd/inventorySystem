@@ -1,8 +1,23 @@
-# React + Vite
+# React Speech To Text
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[demo](https://react-speech-to-text-neon.vercel.app/)
 
-Currently, two official plugins are available:
+## Packages
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[react-speech-recognition](https://www.npmjs.com/package/react-speech-recognition)
+
+[styled-components](https://www.npmjs.com/package/styled-components)
+
+[react-toastify](https://www.npmjs.com/package/react-toastify)
+
+[react-spinners](https://www.npmjs.com/package/react-spinners)
+
+[box-icons](https://boxicons.com/)
+
+In the project directory, you can run , firstly `yarn` or `npm install`, after that `yarn start` or `npm run start`
+
+## Images
+
+![Screenshot_1](https://user-images.githubusercontent.com/46889813/96306511-76921500-1008-11eb-836c-5b7562d36fce.png)
+
+![Screenshot_2](https://user-images.githubusercontent.com/46889813/96306540-814caa00-1008-11eb-9801-1477759142a7.png)
